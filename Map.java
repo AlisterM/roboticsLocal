@@ -11,6 +11,8 @@ public class Map {
 		Grid = new boolean[x][y];
 		xSize=x;
 		ySize=y;
+		
+		
 //--------------------------CODE TO FLL IN CORNERS----------------------
 		for(int q=0;q<19;q++){
 		for(int r=0;r<=q;r++){
@@ -38,6 +40,8 @@ public class Map {
 //----------------------------------END---------------------------------------
 	}
 	
+//---------------------------------Methods--------------------------------------
+	
 	public void addLoc(int x, int y){
 		Grid[x][y] = true;
 		System.out.println("added: " + x + "," + y);
@@ -54,15 +58,15 @@ public class Map {
 	
 	
 
-
-public static void main(String[] args) {
-	Map test = new Map(63, 63);
-	
-	if(test.isFilled(44, 0)){
-		System.out.println("filled");}
-	else{
-		System.out.println("not filled");
-	}
-}
+////-----------------------------------------Test Stuff-----------------------------------
+//public static void main(String[] args) {
+//	Map test = new Map(63, 63);
+//	
+//	if(test.isFilled(44, 0)){
+//		System.out.println("filled");}
+//	else{
+//		System.out.println("not filled");
+//	}
+//}
 
 }
