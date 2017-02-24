@@ -14,7 +14,7 @@ public class Map {
 		
 		
 //--------------------------CODE TO FLL IN CORNERS----------------------
-		for(int q=0;q<19;q++){
+		/*for(int q=0;q<19;q++){
 		for(int r=0;r<=q;r++){
 				addLoc(44+q, 0+r);
 				
@@ -36,7 +36,7 @@ public class Map {
 			for(int r=0;r<=q;r++){
 				addLoc(44+q,62-r);
 			}//fills top right
-		}
+		}*/
 //----------------------------------END---------------------------------------
 	}
 	
@@ -44,7 +44,7 @@ public class Map {
 	
 	public void addLoc(int x, int y){
 		Grid[x][y] = true;
-		System.out.println("added: " + x + "," + y);
+		//System.out.println("added: " + x + "," + y);
 	}
 	public void removeLoc(int x, int y){
 		Grid[x][y] = false;
@@ -59,14 +59,18 @@ public class Map {
 	
 
 ////-----------------------------------------Test Stuff-----------------------------------
-//public static void main(String[] args) {
-//	Map test = new Map(63, 63);
-//	
+public static void main(String[] args) {
+	Coordinate start = new Coordinate(1,2);
+	Coordinate end = new Coordinate(4,4);
+	Map test = new Map(5,5);
+	Search tS = new Search(start, end, test);
+	System.out.println(tS.startSearch(start));
+	
 //	if(test.isFilled(44, 0)){
 //		System.out.println("filled");}
 //	else{
 //		System.out.println("not filled");
 //	}
-//}
+}
 
 }
