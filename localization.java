@@ -47,6 +47,7 @@ public class localization {
 	static double p_stay = 1.0 - p_move;
 	//initial distribution of each value.
 	static double pinit = 1.0 / colors.length;
+	//should this have a double or a float?
     static HashMap<Integer, Double> probDistHash;
 	//normalization value;
     static double norm;
@@ -132,11 +133,14 @@ public class localization {
 			//just checking the current val.
 			
 			StringBuffer sb = new StringBuffer(16);
-			sb.append("V: ");
-			for(int i = 0; i < colors.length; i ++){
-				sb.append(probDistHash.get(i));
-				sb.append(", ");
-			}
+			//this append doesnt seem to be working.
+			sb.append("firstProb: ");
+//			for(int i = 0; i < colors.length; i ++){
+//				sb.append(probDistHash.get(i));
+//				sb.append(", ");
+//			}
+			//checks the prob that its at the 4th blue. (only one spot where 4 blue)
+			sb.append(30);
 			LCD.drawString(sb.toString(),1,1);
 			//calculating the normalization value
 			for(int i = 0; i < probDistHash.size(); i++){
