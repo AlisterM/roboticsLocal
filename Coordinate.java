@@ -1,5 +1,8 @@
 package Mapping;
 
+import java.util.Objects;
+import java.lang.Object;
+
 public class Coordinate {
  int x;
  int y;
@@ -37,5 +40,23 @@ public class Coordinate {
 		int xDif = java.lang.Math.abs(end.x - x);
 		int yDif = java.lang.Math.abs(end.y - y);
 		return xDif+yDif;
+	}
+	public boolean uals(Coordinate other){
+		if(this.x==other.x&&this.y==other.y){
+		return true;
+		}
+		else{
+			return false;
+		}
+	}
+	@Override
+    public int hashCode() {
+        return Objects.hash(x,y);
+    }
+	
+	public String toString(){
+		
+		return "x: " + this.x + " y: " + this.y;
+		
 	}
 }
