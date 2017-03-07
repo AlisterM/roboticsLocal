@@ -1,5 +1,4 @@
 package navigateBot;
-
 import java.util.HashMap;
 
 import lejos.hardware.lcd.LCD;
@@ -89,6 +88,7 @@ public class localization {
 		}
 		return 0.0;
 	}
+	
 	static int getKey(){
 			for(int i = 0; i < probDistHash.size(); i ++){
 				if(probDistHash.get(i) >= .95){
@@ -114,6 +114,14 @@ public class localization {
 	static void MoveAndUpdate(){
 		
 		moveTwo();
+		
+		//calculating the normalization value
+		totalProb = 0;
+		for(int i = 0; i < probDistHash.size(); i++){
+			totalProb += probDistHash.get(i);
+		}
+		norm = 1/totalProb;
+		
 		//i don't think the blueorWhite method will work right.
 		for(int i = 1; i < colors.length; i++){
 			
@@ -127,6 +135,7 @@ public class localization {
 	static int Localization(){
 		//NEED A while loop that stops when a prob has gotten to a certain percent...
 		Initialization();
+		
 		while(checkDist() <= .95){
 			//fetches a sample currentVal which is either blue: true or white: false
 			boolean currentVal = blueOrWhite();
@@ -140,14 +149,14 @@ public class localization {
 //				sb.append(", ");
 //			}
 			//checks the prob that its at the 4th blue. (only one spot where 4 blue)
-			sb.append(30);
+			sb.append(probDistHash.get(30));
 			LCD.drawString(sb.toString(),1,1);
 			//calculating the normalization value
+			totalProb = 0;
 			for(int i = 0; i < probDistHash.size(); i++){
 				totalProb += probDistHash.get(i);
 			}
 			norm = 1/totalProb;
-			totalProb = 0;
 			
 			for(int i = 0; i < colors.length; i++){
 				if (currentVal == colors[i]){
@@ -158,15 +167,10 @@ public class localization {
 				}
 			}
 			
-			//calculating the normalization value
-			for(int i = 0; i < probDistHash.size(); i++){
-				totalProb += probDistHash.get(i);
-			}
-			norm = 1/totalProb;
-			totalProb = 0;
 			MoveAndUpdate();
 		}
 		LCD.drawInt(getKey(), 1, 1);
+		Delay.msDelay(1000);
 		return getKey(); 
 		//you want to return the value from the hashmap that has the greatest probability inside of it... 
 		//so in your array hashmap if [1:0.4, 2:0.8] <-- you return the second group of values and take the index which indicates the position you are at in your array which demonstrates the position on the board..
