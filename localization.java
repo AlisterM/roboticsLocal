@@ -130,9 +130,13 @@ public class localization {
 			//fetches a sample currentVal which is either blue: true or white: false
 			boolean currentVal = blueOrWhite();
 			//just checking the current val.
+			
 			StringBuffer sb = new StringBuffer(16);
 			sb.append("V: ");
-			sb.append(currentVal);
+			for(int i = 0; i < colors.length; i ++){
+				sb.append(probDistHash.get(i));
+				sb.append(", ");
+			}
 			LCD.drawString(sb.toString(),1,1);
 			//calculating the normalization value
 			for(int i = 0; i < probDistHash.size(); i++){
