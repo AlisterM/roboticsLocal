@@ -1,3 +1,5 @@
+package navigateBot;
+
 import java.util.HashMap;
 
 import lejos.hardware.lcd.LCD;
@@ -55,7 +57,7 @@ public class localization {
 		rightMA.setSpeed(110);
 		leftMD.rotate(41, true);
 		rightMA.rotate(41, true);
-		Delay.msDelay(500);
+		Delay.msDelay(900);
 	}
 
 	 //should return a float array with 3 values (rgb)
@@ -77,8 +79,8 @@ public class localization {
 		return false;
 	}
 	
-	static //finds a value in the probDistHash that is greater than .7 so should theoretically know where it is.
-	Double checkDist(){
+	//finds a value in the probDistHash that is greater than .7 so should theoretically know where it is.
+	static Double checkDist(){
 		for(int i = 0; i < probDistHash.size(); i ++){
 			if(probDistHash.get(i) >= .95){
 				return probDistHash.get(i);
@@ -112,10 +114,10 @@ public class localization {
 		
 		moveTwo();
 		//i don't think the blueorWhite method will work right.
-		for(int i = 0; i < colors.length; i ++){
+		for(int i = 1; i < colors.length; i++){
 			
 			//is this the correct update for after a move?
-				probDistHash.put(i, p_move*norm*probDistHash.get(i-1) + p_stay*p_move*norm*probDistHash.get(i) );
+				probDistHash.put(i, p_move*norm*probDistHash.get(i-1) + p_stay*p_move*norm*probDistHash.get(i));
 				
 		}	
 	}
@@ -127,21 +129,31 @@ public class localization {
 		while(checkDist() <= .7){
 			//fetches a sample currentVal which is either blue: true or white: false
 			boolean currentVal = blueOrWhite();
-			
+			//just checking the current val.
+			StringBuffer sb = new StringBuffer(16);
+			sb.append("V: ");
+			sb.append(currentVal);
+			LCD.drawString(sb.toString(),1,1);
 			//calculating the normalization value
 			for(int i = 0; i < probDistHash.size(); i++){
 				totalProb += probDistHash.get(i);
 			}
 			norm = 1/totalProb;
 			
-			for(int i = 0; i < colors.length; i ++){
+			for(int i = 0; i < colors.length; i++){
 				if (currentVal == colors[i]){
-					probDistHash.put(i, norm*sensor_right*probDistHash.get(i-1));
+					probDistHash.put(i, norm*sensor_right*probDistHash.get(i));
 				}
 				else{
-					probDistHash.put(i, norm*sensor_wrong*probDistHash.get(i-1));
+					probDistHash.put(i, norm*sensor_wrong*probDistHash.get(i));
 				}
 			}
+			
+			//calculating the normalization value
+			for(int i = 0; i < probDistHash.size(); i++){
+				totalProb += probDistHash.get(i);
+			}
+			norm = 1/totalProb;
 			MoveAndUpdate();
 		}
 		LCD.drawInt(getKey(), 1, 1);
@@ -151,13 +163,11 @@ public class localization {
 				}
 		
 
-	public static void main(String[] args) {
+	public static void startL() {
 		colorSensor.getRGBMode();
 //		moveTwo();
 		Localization();
-		
-		
-		
+
 	}
 	
 	
