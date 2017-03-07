@@ -36,19 +36,19 @@ public class localization {
 	//https://www.youtube.com/watch?v=9a42_zEeeA0
 	//will need [0,1] move right and [0,-1] move left
 	
-	Boolean[] colors = {true, false, true, false, false, true, true, false, true, true, false, false, true, true, true, false, true, true, true, false, false, true, true, true, false, false, false, true, true, true, true, false, false, false};
+	static Boolean[] colors = {true, false, true, false, false, true, true, false, true, true, false, false, true, true, true, false, true, true, true, false, false, true, true, true, false, false, false, true, true, true, true, false, false, false};
 	//prob sensor value is right / wrong
-	double sensor_right = 0.9;
-	double sensor_wrong = 1 - sensor_right;
+	static double sensor_right = 0.9;
+	static double sensor_wrong = 1 - sensor_right;
 	//prob we actually moved
-	double p_move = 1.0;
-	double p_stay = 1.0 - p_move;
+	static double p_move = 1.0;
+	static double p_stay = 1.0 - p_move;
 	//initial distribution of each value.
-	double pinit = 1.0 / colors.length;
-    HashMap<Integer, Double> probDistHash;
+	static double pinit = 1.0 / colors.length;
+    static HashMap<Integer, Double> probDistHash;
 	//normalization value;
-    double norm;
-    double totalProb;
+    static double norm;
+    static double totalProb;
 		
 	static void moveTwo(){ //Moves robot 2cm
 		leftMD.setSpeed(110);
@@ -59,7 +59,7 @@ public class localization {
 	}
 
 	 //should return a float array with 3 values (rgb)
-	float[] getSample(){ //Gets samples
+	static float[] getSample(){ //Gets samples
 		float[] sample = new float [sampleSize];
 		sampleProvider.fetchSample(sample,  0);
 		float[] rgb = {sample[0], sample[1], sample[2]};
@@ -67,7 +67,7 @@ public class localization {
 	}
 	
 	//if true blue if false white.
-	boolean blueOrWhite(){
+	static boolean blueOrWhite(){
 		//calls getSample to get the sample.. duh`
 		float[] sample = getSample();
 		if (sample[2] < .1 && sample[2] > .03){
@@ -77,7 +77,7 @@ public class localization {
 		return false;
 	}
 	
-	//finds a value in the probDistHash that is greater than .7 so should theoretically know where it is.
+	static //finds a value in the probDistHash that is greater than .7 so should theoretically know where it is.
 	Double checkDist(){
 		for(int i = 0; i < probDistHash.size(); i ++){
 			if(probDistHash.get(i) >= .95){
@@ -86,7 +86,7 @@ public class localization {
 		}
 		return 0.0;
 	}
-	int getKey(){
+	static int getKey(){
 			for(int i = 0; i < probDistHash.size(); i ++){
 				if(probDistHash.get(i) >= .95){
 					return i;
@@ -95,7 +95,7 @@ public class localization {
 			return -1;
 	}
 	
-	void Initialization(){
+	static void Initialization(){
 		//set up prob distribution
 //		for(int i = 0; i < pDistr.length; i ++){
 //			pDistr[i] = pinit;
@@ -108,7 +108,7 @@ public class localization {
 		
 	}
 	
-	void MoveAndUpdate(){
+	static void MoveAndUpdate(){
 		
 		moveTwo();
 		//i don't think the blueorWhite method will work right.
@@ -121,7 +121,7 @@ public class localization {
 	}
 
 	
-	int Localization(){
+	static int Localization(){
 		//NEED A while loop that stops when a prob has gotten to a certain percent...
 		Initialization();
 		while(checkDist() <= .7){
@@ -154,6 +154,8 @@ public class localization {
 	public static void main(String[] args) {
 		colorSensor.getRGBMode();
 //		moveTwo();
+		Localization();
+		
 		
 		
 	}
