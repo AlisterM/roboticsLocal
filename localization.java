@@ -127,7 +127,7 @@ public class localization {
 	static int Localization(){
 		//NEED A while loop that stops when a prob has gotten to a certain percent...
 		Initialization();
-		while(checkDist() <= .7){
+		while(checkDist() <= .95){
 			//fetches a sample currentVal which is either blue: true or white: false
 			boolean currentVal = blueOrWhite();
 			//just checking the current val.
@@ -147,6 +147,7 @@ public class localization {
 				totalProb += probDistHash.get(i);
 			}
 			norm = 1/totalProb;
+			totalProb = 0;
 			
 			for(int i = 0; i < colors.length; i++){
 				if (currentVal == colors[i]){
@@ -162,6 +163,7 @@ public class localization {
 				totalProb += probDistHash.get(i);
 			}
 			norm = 1/totalProb;
+			totalProb = 0;
 			MoveAndUpdate();
 		}
 		LCD.drawInt(getKey(), 1, 1);
