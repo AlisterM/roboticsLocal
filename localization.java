@@ -51,6 +51,7 @@ public class localization {
 	//normalization value;
     static double norm;
     static double totalProb;
+    static double threshold = .95;
 		
 	static void moveTwo(){ //Moves robot 2cm
 		leftMD.setSpeed(110);
@@ -82,7 +83,7 @@ public class localization {
 	//finds a value in the probDistHash that is greater than .7 so should theoretically know where it is.
 	static Double checkDist(){
 		for(int i = 0; i < probDistHash.size(); i ++){
-			if(probDistHash.get(i) >= .95){
+			if(probDistHash.get(i) >= threshold){
 				return probDistHash.get(i);
 		}
 		}
@@ -91,7 +92,7 @@ public class localization {
 	
 	static int getKey(){
 			for(int i = 0; i < probDistHash.size(); i ++){
-				if(probDistHash.get(i) >= .95){
+				if(probDistHash.get(i) >= threshold){
 					return i;
 			}
 			}
@@ -136,10 +137,14 @@ public class localization {
 		//NEED A while loop that stops when a prob has gotten to a certain percent...
 		Initialization();
 		
-		while(checkDist() <= .95){
-			//fetches a sample currentVal which is either blue: true or white: false
-			boolean currentVal = blueOrWhite();
-			//just checking the current val.
+		while(checkDist() <= threshold){
+			
+			//get currvalue was here but moving it to fit the test code.
+			
+			totalProb = 0;
+			
+			
+			//***from here
 			
 			StringBuffer sb = new StringBuffer(16);
 			//this append doesnt seem to be working.
@@ -151,14 +156,17 @@ public class localization {
 			//checks the prob that its at the 4th blue. (only one spot where 4 blue)
 			sb.append(probDistHash.get(30));
 			LCD.drawString(sb.toString(),1,1);
-			//calculating the normalization value
-			totalProb = 0;
-			for(int i = 0; i < probDistHash.size(); i++){
-				totalProb += probDistHash.get(i);
-			}
-			norm = 1/totalProb;
+			
+			//***to here is testing by drawing the prob values to the lcd
+			
+			
+			//had normalization here but will move it to fit the quiz code
 			
 			for(int i = 0; i < colors.length; i++){
+				
+				//fetches a sample currentVal which is either blue: true or white: false
+				boolean currentVal = blueOrWhite();
+				
 				if (currentVal == colors[i]){
 					probDistHash.put(i, norm*sensor_right*probDistHash.get(i));
 				}
@@ -179,7 +187,6 @@ public class localization {
 
 	public static void startL() {
 		colorSensor.getRGBMode();
-//		moveTwo();
 		Localization();
 
 	}
