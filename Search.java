@@ -12,7 +12,7 @@ class Search{
 	ArrayList<Coordinate> closedList;
 	DefaultMutableTreeNode lastNode;
 	boolean endFound;
-	private ArrayList<Coordinate> nodePath;
+	private TreeNode[] nodePath;
 	//Test Code----------------------------------
 	Search(DefaultMutableTreeNode root){
 		
@@ -41,8 +41,8 @@ class Search{
 	}
 //----------------------------Methods--------------------------------------
 	//TODO Just fucking redo this whole mess
-	public ArrayList<Coordinate> startSearch(Coordinate sIn){
-		nodePath = new ArrayList<Coordinate>();
+	public TreeNode[] startSearch(Coordinate sIn){
+		//nodePath = new ArrayList<TreeNode>();
 		while(openList.size()>0&&endFound){
 			expand();
 		}
@@ -55,18 +55,19 @@ class Search{
 			System.out.println(test.g);
 			System.out.println(test.h);
 			System.out.println(test.f);
-			nodePath.add(0, test);
-			while(true){
+			//nodePath.add(0, test);
+			nodePath=currentNode.getPath();
+			//while(true){
 				//try{
-					currentNode = (DefaultMutableTreeNode) currentNode.getParent();
-					test=(Coordinate) currentNode.getUserObject();
+					//currentNode = (DefaultMutableTreeNode) currentNode.getParent();
+					//test=(Coordinate) currentNode.getUserObject();
 				//}catch(Exception e){
 				//	break;
 				//}
 				//finally{
 				//	break;
 				//}
-			}	
+			//}	
 		}
 		return nodePath;	
 	}
@@ -86,8 +87,9 @@ class Search{
 		for(int i=0;i<openList.size();i++){
 			if(openList.get(i).f<c.f){
 				c=openList.get(i);
-			}
-		}
+			}//if
+		}//for
+		System.out.println("Expand chosen: "+c.x + " " +c.y);
 		//adds the parent to the close list and adds the adjacent nodes to the open list.
 		closedList.add(c);
 		this.addOpen(c.x+1, c.y, c);
@@ -104,7 +106,7 @@ class Search{
 		//return null;
 	}
 	void addOpen(int xin, int yin, Coordinate parent){
-		System.out.println("add open");
+		System.out.println("add open: "+xin +" " +yin);
 		//checks if space is occupied
 		if(!map.isFilled(xin, yin)){
 			//checks if the node is already in the open list
@@ -123,8 +125,9 @@ class Search{
 							openList.get(i).g=parent.g+1;
 							openList.get(i).f=calcF(openList.get(i), parent.g);
 							//also update value in the tree.
-							break;
+							break;//TODO multiple coordiantes added to the open list/ the tree. problem with this peice of code.
 						}
+						else{return;}
 					}
 				}
 				//creates a new coordiante and adds it to the open list
@@ -141,7 +144,7 @@ class Search{
 				}
 				return;	
 			}
-			else{
+			else{//TODO fix this
 				int tempH = endPoint.manhatCompare(xin, yin, this.endPoint);
 				Coordinate temp = new Coordinate(xin, yin, (parent.g+1), tempH, (tempH+parent.g+1));
 				openList.add(temp);
@@ -181,13 +184,28 @@ class Search{
 	
 	public DefaultMutableTreeNode recursiveSearch(DefaultMutableTreeNode m, Coordinate c){
 		DefaultMutableTreeNode	foundNode = new DefaultMutableTreeNode();
+		DefaultMutableTreeNode emptyNode = foundNode;
+		//checks if the node sent to the method is equal to c
 		if(((Coordinate) m.getUserObject()).uals(c)){
 			return m;
 		}
 		else{
-			if(!(m.children()==null)){
+			//if the node has children
+			if(!(m.children()==null)){//note this section doesnt quite work as intended
+				//iterates through the child list
 				for(int i=0;i< m.getChildCount();++i){
+					//calls this method on the child node
 					foundNode = recursiveSearch((DefaultMutableTreeNode) m.getChildAt(i), c);
+					try{
+						if(((Coordinate) foundNode.getUserObject()).uals(c)){//TODO the problem is here
+							return foundNode;
+						}//if
+					}//try
+					catch(Exception e){
+						//do nothing
+					}//catch
+					
+					
 					
 				}//for
 				return foundNode;

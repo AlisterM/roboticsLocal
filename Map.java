@@ -3,6 +3,8 @@ package Mapping;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.DefaultBoundedRangeModel;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 public class Map {
@@ -71,14 +73,14 @@ public class Map {
 ////-----------------------------------------Test Stuff-----------------------------------
 public static void main(String[] args) {
 	Coordinate start = new Coordinate(16,4);
-	Coordinate end = new Coordinate(50,50);
+	Coordinate end = new Coordinate(20,7);
 	Map test = new Map(63,63);
 	Search tS = new Search(start, end, test);
-	ArrayList<Coordinate> tesnode = tS.startSearch(start);
-	for(int i=0;i<tesnode.size();i++){
-		System.out.println(tesnode.get(i).x+" " + tesnode.get(i).y);
-		
+	TreeNode[] tesnode = tS.startSearch(start);
+	for(int i=0;i<tesnode.length;i++){
+	System.out.println("X: " + ((Coordinate)((DefaultMutableTreeNode) tesnode[i]).getUserObject()).x + " Y: " + ((Coordinate)((DefaultMutableTreeNode) tesnode[i]).getUserObject()).y);
 	}
+}
 	
 	
 //	if(test.isFilled(44, 0)){
@@ -86,6 +88,6 @@ public static void main(String[] args) {
 //	else{
 //		System.out.println("not filled");
 //	}
-}
+
 
 }
