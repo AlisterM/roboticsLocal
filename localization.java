@@ -51,7 +51,9 @@ public class localization {
 	//normalization value;
     static double norm;
     static double totalProb;
-    static double threshold = .95;
+    static double threshold = .65;
+    //testing
+    private static int counter = 0;
 		
 	static void moveTwo(){ //Moves robot 2cm
 		leftMD.setSpeed(110);
@@ -78,6 +80,7 @@ public class localization {
 		}
 		else
 		return false;
+		
 	}
 	
 	//finds a value in the probDistHash that is greater than .7 so should theoretically know where it is.
@@ -85,7 +88,7 @@ public class localization {
 		for(int i = 0; i < probDistHash.size(); i ++){
 			if(probDistHash.get(i) >= threshold){
 				return probDistHash.get(i);
-		}
+			}
 		}
 		return 0.0;
 	}
@@ -93,8 +96,10 @@ public class localization {
 	static int getKey(){
 			for(int i = 0; i < probDistHash.size(); i ++){
 				if(probDistHash.get(i) >= threshold){
-					return i;
-			}
+					//double check that i-1 is correct...
+					System.out.println(i-1);
+					return i-1;
+				}
 			}
 			return -1;
 	}
@@ -112,25 +117,7 @@ public class localization {
 		
 	}
 	
-	static void MoveAndUpdate(){
-		
-		moveTwo();
-		
-		//calculating the normalization value
-		totalProb = 0;
-		for(int i = 0; i < probDistHash.size(); i++){
-			totalProb += probDistHash.get(i);
-		}
-		norm = 1/totalProb;
-		
-		//i don't think the blueorWhite method will work right.
-		for(int i = 1; i < colors.length; i++){
-			
-			//is this the correct update for after a move?
-				probDistHash.put(i, p_move*norm*probDistHash.get(i-1) + p_stay*p_move*norm*probDistHash.get(i));
-				
-		}	
-	}
+
 
 	
 	static int Localization(){
@@ -139,50 +126,78 @@ public class localization {
 		
 		while(checkDist() <= threshold){
 			
+			
 			//get currvalue was here but moving it to fit the test code.
 			
 			totalProb = 0;
-			
-			
-			//***from here
-			
-			StringBuffer sb = new StringBuffer(16);
-			//this append doesnt seem to be working.
-			sb.append("firstProb: ");
-//			for(int i = 0; i < colors.length; i ++){
-//				sb.append(probDistHash.get(i));
-//				sb.append(", ");
-//			}
-			//checks the prob that its at the 4th blue. (only one spot where 4 blue)
-			sb.append(probDistHash.get(30));
-			LCD.drawString(sb.toString(),1,1);
-			
-			//***to here is testing by drawing the prob values to the lcd
-			
-			
+
+			boolean currentVal = blueOrWhite();
+
 			//had normalization here but will move it to fit the quiz code
 			
 			for(int i = 0; i < colors.length; i++){
 				
 				//fetches a sample currentVal which is either blue: true or white: false
-				boolean currentVal = blueOrWhite();
 				
 				if (currentVal == colors[i]){
-					probDistHash.put(i, norm*sensor_right*probDistHash.get(i));
+					//maybe i shouldnt have the norm value here. trying to make a new normalize method
+					probDistHash.put(i, sensor_right*probDistHash.get(i));
 				}
 				else{
-					probDistHash.put(i, norm*sensor_wrong*probDistHash.get(i));
+					probDistHash.put(i, sensor_wrong*probDistHash.get(i));
 				}
 			}
 			
+			//calculating the normalization value
+			//probsum
+			totalProb = 0;
+			for(int i = 0; i < probDistHash.size(); i++){
+				totalProb += probDistHash.get(i);
+			}
+			norm = 1/totalProb;
+			
+			for (int i = 0; i< colors.length; i++){probDistHash.put(i,probDistHash.get(i)*norm);}
+			
 			MoveAndUpdate();
+			
+			//calculating the normalization value
+			//probsum
+			totalProb = 0;
+			for(int i = 0; i < probDistHash.size(); i++){
+				totalProb += probDistHash.get(i);
+			}
+			norm = 1/totalProb;
+			
+			for (int i = 0; i< colors.length; i++){probDistHash.put(i,probDistHash.get(i)*norm);}
+			
 		}
-		LCD.drawInt(getKey(), 1, 1);
+//		LCD.drawInt(getKey(), 1, 1);
 		Delay.msDelay(1000);
 		return getKey(); 
 		//you want to return the value from the hashmap that has the greatest probability inside of it... 
 		//so in your array hashmap if [1:0.4, 2:0.8] <-- you return the second group of values and take the index which indicates the position you are at in your array which demonstrates the position on the board..
 				}
+	
+	static void MoveAndUpdate(){
+		moveTwo();
+		
+double[] temp = new double[probDistHash.size()];
+		
+		for(int i = 0; i < colors.length; i++){
+			temp[i] = probDistHash.get(i);
+		}
+		
+		for(int i = 0; i < colors.length; i++){
+			//is this the correct update for after a move?
+			if(i == 0){
+				probDistHash.put(i, p_stay*temp[i]);	
+
+			}
+			else{
+				probDistHash.put(i, p_move*temp[i-1] + p_stay*temp[i]);	
+			}
+		}	
+	}
 		
 
 	public static void startL() {
