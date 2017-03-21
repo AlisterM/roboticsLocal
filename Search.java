@@ -1,4 +1,4 @@
-package Mapping;
+package navigateBot;
 import javax.swing.tree.*;
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -16,9 +16,6 @@ import lejos.utility.Delay;
 
 public class localization {
 	
-	//Mptor setup
-	static BaseRegulatedMotor leftMD = new EV3LargeRegulatedMotor(MotorPort.D);
-	static BaseRegulatedMotor rightMA = new EV3LargeRegulatedMotor(MotorPort.C);
 	
 	//Test alt sensor
 	
@@ -55,13 +52,13 @@ public class localization {
     //testing
     private static int counter = 0;
 		
-	static void moveTwo(){ //Moves robot 2cm
+	/*static void moveTwo(){ //Moves robot 2cm
 		leftMD.setSpeed(110);
 		rightMA.setSpeed(110);
 		leftMD.rotate(41, true);
 		rightMA.rotate(41, true);
 		Delay.msDelay(900);
-	}
+	}*/
 
 	 //should return a float array with 3 values (rgb)
 	static float[] getSample(){ //Gets samples
@@ -97,8 +94,9 @@ public class localization {
 			for(int i = 0; i < probDistHash.size(); i ++){
 				if(probDistHash.get(i) >= threshold){
 					//double check that i-1 is correct...
-					System.out.println(i-1);
-					return i-1;
+					System.out.println(i);
+					Delay.msDelay(5000);
+					return i;
 				}
 			}
 			return -1;
@@ -179,9 +177,10 @@ public class localization {
 				}
 	
 	static void MoveAndUpdate(){
-		moveTwo();
-		
-double[] temp = new double[probDistHash.size()];
+//		moveTwo();
+		Robby.moveCMForward(2, 100);
+		Delay.msDelay(1000);
+		double[] temp = new double[probDistHash.size()];
 		
 		for(int i = 0; i < colors.length; i++){
 			temp[i] = probDistHash.get(i);

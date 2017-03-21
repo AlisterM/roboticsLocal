@@ -1,4 +1,4 @@
-package Mapping;
+package navigateBot;
 
 import java.util.Objects;
 import java.lang.Object;
@@ -20,6 +20,14 @@ public class Coordinate {
 		x=xin;
 		y=yin;
 		f=fin;
+	}
+	
+	public int getX(){
+		return x;
+	}
+	
+	public int getY(){
+		return y;
 	}
 	
 	public Coordinate(int xin, int yin, int gin, int hin, int fin){

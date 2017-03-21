@@ -1,44 +1,52 @@
 package navigateBot;
 
-import lejos.hardware.motor.BaseRegulatedMotor;
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import lejos.hardware.port.MotorPort;
-import lejos.hardware.port.Port;
-import lejos.hardware.port.SensorPort;
-import lejos.hardware.sensor.EV3ColorSensor;
-import lejos.robotics.RegulatedMotor;
-import lejos.robotics.SampleProvider;
-import lejos.utility.Delay;
+import java.util.ArrayList;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 public class main {
 	
-	//Mptor setup
-	BaseRegulatedMotor leftMD = new EV3LargeRegulatedMotor(MotorPort.D);
-	BaseRegulatedMotor rightMA = new EV3LargeRegulatedMotor(MotorPort.C);
-	
-	//Test alt sensor
-	
-	//Setup Colour sensor
-	static Port colorSensorPort = SensorPort.S1;
-	static EV3ColorSensor colorSensor = new EV3ColorSensor(colorSensorPort);
-	SampleProvider sampleProvider = new EV3ColorSensor(colorSensorPort);
-	int sampleSize = sampleProvider.sampleSize();
 	
 	public static void main(String[] args) {
-		colorSensor.getRGBMode();
+		Robby rob = new Robby();
+//		rob.turnTo(-90);
+		/*ArrayList<CoordinateTest> path = new ArrayList<CoordinateTest>();
+		CoordinateTest start = new CoordinateTest(0,0);
+		CoordinateTest fwd = new CoordinateTest(0,5);
+		CoordinateTest left = new CoordinateTest(5, 5);
+		CoordinateTest right = new CoordinateTest(5,16);
+		CoordinateTest qwe = new CoordinateTest(3, 18);
+		path.add(start);
+		path.add(fwd);
+		path.add(left);
+		path.add(right);
+		path.add(qwe);
+		rob.followPathTrig(path);*/
+//		
+//		rob.trig(start,fwd, 6);
+		localization.startL();
+		
+		
+		//Final stuff (hopefully) Not quite
+		/*Coordinate start = new Coordinate(31,15);
+		Coordinate end = new Coordinate(31,20);
+		
+		Map test = new Map(63,63);
+		
+		Search tS = new Search(start, end, test);
+		
+		
+		rob.followPathTrig(Map.getPath(tS.startSearch(start)));*/
+		
+//		Coordinate start = new Coordinate(11,5);
+//		Coordinate end = new Coordinate(15,17);
+//		Map test = new Map(23,23);
+//		
+//		Search tS = new Search(start, end, test);
+//		
+//		
+//		rob.followPathTrig(Map.getPath(tS.startSearch(start)));
 	}
 	
-	void moveTwo(){ //Moves robot 2cm
-		leftMD.setSpeed(110);
-		rightMA.setSpeed(110);
-		leftMD.rotate(41, true);
-		rightMA.rotate(41, true);
-		Delay.msDelay(500);
-	}
-	
-	float[] getSample(){ //Gets samples
-		float[] sample = new float[sampleSize];
-		sampleProvider.fetchSample(sample,  0);
-		return sample;
-	}
 }

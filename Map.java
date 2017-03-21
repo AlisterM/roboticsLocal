@@ -1,4 +1,4 @@
-package Mapping;
+package navigateBot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,6 +67,17 @@ public class Map {
 			return Grid[x][y];}
 		else{return true;}
 		}
+	
+	public static ArrayList<Coordinate> getPath(TreeNode[] p){
+		ArrayList<Coordinate> path = new ArrayList<Coordinate>();
+		for(int i = 0; i < p.length; ++i){
+			path.add(((Coordinate)((DefaultMutableTreeNode) p[i]).getUserObject()));
+		}
+		/*for(int i = 0; i < path.size(); ++i){
+			System.out.println(path.get(i).x + " " + path.get(i).y);
+		}*/
+		return path;
+	}
 	
 	
 
