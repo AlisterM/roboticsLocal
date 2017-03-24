@@ -59,6 +59,20 @@ public class localization {
 		rightMA.rotate(41, true);
 		Delay.msDelay(900);
 	}*/
+    
+    static Coordinate getCoordinates(int locValue){
+    	if(locValue % 3 == 2) {
+    		locValue += 2;
+    		Robby.moveCMForward(4, 100);
+    	}
+		if(locValue % 3 == 1) {
+			locValue += 1;
+			Robby.moveCMForward(2, 100);
+		}
+		int finY = locValue / 3;
+		int finX = 12;
+		return Coordinate(finX,finY);
+    }
 
 	 //should return a float array with 3 values (rgb)
 	static float[] getSample(){ //Gets samples
