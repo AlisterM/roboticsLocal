@@ -1,15 +1,14 @@
 package navigateBot;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
+import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.BaseRegulatedMotor;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.Port;
 import lejos.hardware.port.SensorPort;
-import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
@@ -61,6 +60,46 @@ public class Robby {
 		USampleProv.fetchSample(sample, 0);
 		return sample;
 	}
+	
+	public float[] getBsample(){
+		float[] sample = new float[BsampleSize];
+		BsampleProvider.fetchSample(sample, 0);
+		return sample;
+	}
+	
+	public float[] enterGoal(){
+		//Set speed here so that you don't have to type it twice if we need to change it
+		int speedInit = 250;
+		moveCMForward(2, 100);
+		//TODO Add turn to angle here.
+		turnTo(45);
+		leftMD.setSpeed(speedInit);
+		rightMA.setSpeed(speedInit);
+		while(true){
+			float[] ultraRead = getUsample();
+			float[] buttPress = getBsample();
+			leftMD.forward();
+			rightMA.forward();
+			//Reduce speed so it doesn't smash into the back of the goal; moving the goal or breaking the robot. 
+			if (ultraRead[ultraRead.length -1] < 0.07){
+				leftMD.setSpeed(speedInit/5);
+				rightMA.setSpeed(speedInit/5);
+			}
+			if (buttPress[buttPress.length -1] == 1){
+				Sound.beep();
+				//get colour sensor reading
+				leftMD.stop();
+				rightMA.stop();
+				float[] rgb = localization.getSample();
+				
+				return rgb;
+			}
+		}
+	}
+	
+	public void exixG(){
+		moveCMBackward(36, 250);
+	}
 
 	// Takes the distance needed to travel and based on the wheel size works how
 	// far it has to rotate the wheels
@@ -79,7 +118,7 @@ public class Robby {
 	}
 
 	// Same as above but for reverse
-	public void moveCMBackward(double cm) {
+	public void moveCMBackward(double cm, int speed) {
 		double dist = cm;
 		double circum = 3.14 * 5.6;
 		double rotation = dist / circum;
@@ -89,8 +128,8 @@ public class Robby {
 		double negative = degrees - toNegate;
 
 		int delay = (int) (140 * cm);
-		leftMD.setSpeed(250);
-		rightMA.setSpeed(250);
+		leftMD.setSpeed(speed);
+		rightMA.setSpeed(speed);
 		leftMD.rotate((int) negative, true);
 		rightMA.rotate((int) negative, true);
 		Delay.msDelay(delay);
@@ -113,23 +152,24 @@ public class Robby {
 			float powerL = (TP - turn);
 
 			if (powerR > 0) {
-				rightMA.setSpeed(powerR);
-				rightMA.forward();
-			}
-
-			else if (powerR < 0) {
 				rightMA.setSpeed(Math.abs(powerR));
 				rightMA.backward();
 			}
 
+			else if (powerR < 0) {
+				rightMA.setSpeed(powerR);
+				rightMA.forward();
+			}
+
 			if (powerL > 0) {
-				leftMD.setSpeed(powerL);
-				leftMD.forward();
+				leftMD.setSpeed(Math.abs(powerR));
+				leftMD.backward();
+				
 			}
 
 			else if (powerL < 0) {
-				leftMD.setSpeed(Math.abs(powerR));
-				leftMD.backward();
+				leftMD.setSpeed(powerL);
+				leftMD.forward();
 			}
 
 			if (error < 1 && error > -1) {
@@ -141,23 +181,39 @@ public class Robby {
 	}
 	
 	public ArrayList<Coordinate> optimisePath(ArrayList<Coordinate> path){
-		ArrayList<Coordinate> optimised = new ArrayList<Coordinate>();
-		int count = 0;
-		return optimised;
+		ArrayList<Coordinate> optimized = new ArrayList<Coordinate>();
+		for (int i = 0; i < path.size(); ++i){
+			optimized.add(path.get(i));
+			if(optimized.size() >= 3){
+				int size = optimized.size();
+				Coordinate three = optimized.get(size -1);
+				Coordinate two = optimized.get(size -2);
+				Coordinate one = optimized.get(size -3);
+				
+				int sum1 = one.getX()*(two.getY() - three.getY());
+				int sum2 = two.getX()*(three.getY() - one.getY());
+				int sum3 = three.getX()*(one.getY() - two.getY());
+				
+				int colinear = sum1 + sum2 + sum3;
+				if(colinear == 0){
+					optimized.remove(size -2);
+				}
+			}
+		}
+		return optimized;
 	}
 
 	// Takes a path and calls the trig function passing in the current position
 	// and the position to move to.
 	public void followPathTrig(ArrayList<Coordinate> p) {
 		for (int i = 0; i < p.size() - 1; ++i) {
+			
 			Coordinate curr = p.get(i);
 			Coordinate next = p.get(i + 1);
 			
 			if(curr.getX() == next.getX()){
 				turnTo(0);
-				
 			}
-			
 			trig(curr, next, 6);
 		}
 	}
@@ -182,25 +238,19 @@ public class Robby {
 		angle = angle * 180 / 3.14159;
 		
 		//Prints the angle to screen
-		StringBuffer sb = new StringBuffer(16);
+		/*StringBuffer sb = new StringBuffer(16);
 		sb.append("V: ");
 		sb.append(angle);
 		LCD.drawString(sb.toString(), 1, 1);
-		System.out.println(angle);
-
-		Delay.msDelay(1000);
-		
-		if((int) angle <= 2.0 && (int) angle >= -2.0){
-			moveCMForward(Hyp, 250);
-		}	
+		System.out.println(angle);*/
 		
 		if ((int) angle == 180.00 || (int) angle == -180.00) {
-			moveCMBackward(Hyp);
+			moveCMBackward(Hyp, 250);
 		} else {
 			turnTo(angle);
 		}
 		
-		Delay.msDelay(1500);
+		Delay.msDelay(300);
 		
 		moveCMForward(Hyp, 250);
 
