@@ -61,17 +61,28 @@ public class localization {
 	}*/
     
     static Coordinate getCoordinates(int locValue){
-    	if(locValue % 3 == 2) {
+    	/*if(locValue % 3 == 2) {
     		locValue += 2;
     		Robby.moveCMForward(4, 100);
     	}
 		if(locValue % 3 == 1) {
 			locValue += 1;
 			Robby.moveCMForward(2, 100);
-		}
+		}*/
+
+    	if(locValue > 19){
+    		int subt = locValue - 19;
+    		locValue -= subt;
+    		Robby.moveCMBackward(subt*2,100);
+    	}
+    	else if(locValue < 19){
+    		int add = 19 - locValue;
+    		locValue += add;
+    		Robby.moveCMForward(add*2,100);
+    	}
 		int finY = locValue / 3;
 		int finX = 12;
-		return Coordinate(finX,finY);
+		return new Coordinate(finX,finY);
     }
 
 	 //should return a float array with 3 values (rgb)
@@ -144,6 +155,7 @@ public class localization {
 			totalProb = 0;
 
 			boolean currentVal = blueOrWhite();
+			System.out.println(currentVal);
 
 			//had normalization here but will move it to fit the quiz code
 			
@@ -213,9 +225,9 @@ public class localization {
 	}
 		
 
-	public static void startL() {
+	public static int startL() {
 		colorSensor.getRGBMode();
-		Localization();
+		return Localization();
 
 	}
 	
